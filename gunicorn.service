@@ -1,0 +1,62 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/djang/mileru
+ExecStart=/root/djang/env/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          mileru.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+chown -R www-data:root ~/djang/mileru
+
+
+server {
+    listen 80;
+    server_name 94.124.78.129;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /root/djang/mileru;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
+
+____________________________________________________
+/home/samson/djang/mileru/static
+
+chmod g+x /home/ && chmod g+x /home/samson && chmod g+x /home/samson/djang && chmod g+x /home/samson/djang/mileru && chmod g+x /home/samson/djang/mileru/static
+
+sudo -u www-data stat /home/samson/djang/mileru/static
+
+/home/samson/djang/mileru/static/static/admin/js/nav_sidebar.js
+
+
+server {
+    listen 80;
+    server_name 94.124.78.129;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /root/djang/mileru/static;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
